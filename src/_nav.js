@@ -11,7 +11,7 @@ export default {
     },
     {
       title: true,
-      name: 'Theme',
+      name: 'GitHub',
       wrapper: {            // optional wrapper object
         element: '',        // required valid HTML5 element tag
         attributes: {}        // optional valid JS object with JS API naming ex: { className: "my-class", style: { fontFamily: "Verdana" }, id: "my-id"}
@@ -19,25 +19,30 @@ export default {
       class: ''             // optional class names space delimited list for title item ex: "text-center"
     },
     {
-      name: 'Colors',
+      name: 'Find',
       url: '/theme/colors',
       icon: 'icon-drop',
     },
     {
-      name: 'Typography',
+      name: 'Releases',
+      url: '/theme/typography',
+      icon: 'icon-pencil',
+    },
+    {
+      name: 'Report',
       url: '/theme/typography',
       icon: 'icon-pencil',
     },
     {
       title: true,
-      name: 'Components',
+      name: 'Circle CI',
       wrapper: {
         element: '',
         attributes: {},
       },
     },
     {
-      name: 'Base',
+      name: 'All Builds',
       url: '/base',
       icon: 'icon-puzzle',
       children: [
@@ -260,21 +265,6 @@ export default {
       url: '/dashboard',
       icon: 'icon-ban',
       attributes: { disabled: true },
-    },
-    {
-      name: 'Download CoreUI',
-      url: 'https://coreui.io/react/',
-      icon: 'icon-cloud-download',
-      class: 'mt-auto',
-      variant: 'success',
-      attributes: { target: '_blank', rel: "noopener" },
-    },
-    {
-      name: 'Try CoreUI PRO',
-      url: 'https://coreui.io/pro/react/',
-      icon: 'icon-layers',
-      variant: 'danger',
-      attributes: { target: '_blank', rel: "noopener" },
     },
   ],
 };
