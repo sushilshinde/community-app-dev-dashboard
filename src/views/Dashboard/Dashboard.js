@@ -33,10 +33,8 @@ class Dashboard extends Component {
       //try to get data
       const apiURL = "https://api-dev-community-app.herokuapp.com/v1/api/deployments"
       //const apiURL = "http://localhost:3000/v1/api/deployments"
+      const response = await axios.get(apiURL);
 
-      const response = await axios.get(apiURL
-
-      );
       if (response.status) {
         this.setState({ deployments: response.data });
       } else {
