@@ -31,8 +31,11 @@ class Dashboard extends Component {
   getDeployments = async () => {
     try {
       //try to get data
-      const response = await axios.get(
-        "https://api-dev-community-app.herokuapp.com/v1/api/deployments"
+      //const apiURL = "https://api-dev-community-app.herokuapp.com/v1/api/deployments"
+      const apiURL = "http://localhost:3000/v1/api/deployments"
+
+      const response = await axios.get(apiURL
+
       );
       if (response.status) {
         this.setState({ deployments: response.data });
