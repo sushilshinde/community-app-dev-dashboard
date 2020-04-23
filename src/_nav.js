@@ -20,7 +20,7 @@ export default {
     },
     {
       name: 'Find',
-      url: '/theme/colors',
+      url: '/git/find-info',
       icon: 'icon-drop',
     },
     {
@@ -30,6 +30,26 @@ export default {
     },
     {
       name: 'Report',
+      url: '/theme/typography',
+      icon: 'icon-pencil',
+    },
+    /*
+    {
+      title: true,
+      name: 'Circle CI',
+      wrapper: {            // optional wrapper object
+        element: '',        // required valid HTML5 element tag
+        attributes: {}        // optional valid JS object with JS API naming ex: { className: "my-class", style: { fontFamily: "Verdana" }, id: "my-id"}
+      },
+      class: ''             // optional class names space delimited list for title item ex: "text-center"
+    },
+    {
+      name: 'All Builds',
+      url: '/theme/colors',
+      icon: 'icon-drop',
+    },
+    {
+      name: 'Releases',
       url: '/theme/typography',
       icon: 'icon-pencil',
     },
@@ -266,5 +286,8 @@ export default {
       icon: 'icon-ban',
       attributes: { disabled: true },
     },
+
+
+    */
   ],
 };
