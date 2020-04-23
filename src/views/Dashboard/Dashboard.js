@@ -2,12 +2,10 @@ import React, { Component, lazy, Suspense } from 'react';
 import { Wave } from 'react-animated-text';
 import { Bar, Line } from 'react-chartjs-2';
 import axios from 'axios'
+import moment from 'moment'
+import "moment-timezone";
 import {
-  Badge,
-  Button,
-  ButtonDropdown,
-  ButtonGroup,
-  ButtonToolbar,
+  Badge, Button,
   Card,
   CardBody,
   CardFooter,
@@ -34,11 +32,6 @@ const brandWarning = getStyle('--warning')
 const brandDanger = getStyle('--danger')
 
 
-
-
-
-
-
 class Dashboard extends Component {
   constructor(props) {
     super(props);
@@ -58,7 +51,7 @@ class Dashboard extends Component {
     try {
       //try to get data
       const response = await axios.get(
-        "https://api-dev-community-app.herokuapp.com/v1/api"
+        "https://api-dev-community-app.herokuapp.com/v1/api/deployments"
       );
       if (response.status) {
         //debugger;
@@ -84,14 +77,14 @@ class Dashboard extends Component {
           <Col>
             <Card>
             <CardHeader>
-                  Community App Environment Deployment Status
-                  <div className="card-header-actions">
+                  Community App Deployments
+                  <div className="card-header-actions text-muted">
                     {/*eslint-disable-next-line*/}
                     <a href="#" className="card-header-action btn btn-setting" onClick={this.getDeployments}><i className="icon-reload"></i></a>
+                    <mark>Last refreshed on <i> {moment().local().format("h:mm:ss a, MMMM Do YYYY")}</i></mark>
 
                   </div>
                 </CardHeader>
-
               <CardBody>
                 <Table
                   hover
@@ -109,11 +102,7 @@ class Dashboard extends Component {
                   </thead>
                   <tbody>
                     {this.state.deployments.map((d,index) => {
-
                         const isJobRunning = d.jobStatus === "running";
-
-
-
                         return (
                           <tr key={index}>
                            <td className="text-center">
@@ -121,7 +110,7 @@ class Dashboard extends Component {
                               {d.env.name}
                             </div>
                             <div className="small text-muted">
-                              <span><a href={`${d.env.url}`}>Home</a></span> | <span><a href={`${d.env.url}/challenges`}>Listing</a></span> | <span><a href={`${d.env.url}/my-dashboard`}>Dashboard</a></span>
+                              <span><a href={`${d.env.url}`} target="_blank">Home</a></span> | <span><a href={`${d.env.url}/challenges`} target="_blank">Listing</a></span> | <span><a href={`${d.env.url}/my-dashboard`} target="_blank">Dashboard</a></span>
                             </div>
                           </td>
                           <td className="text-center">
@@ -149,8 +138,7 @@ class Dashboard extends Component {
                             </div>
                           </td>
                           <td>
-                          {isJobRunning ? <strong>Running</strong>: <strong>{d.buildTimeMillis}</strong>}
-
+                            {isJobRunning ? <strong>Running</strong>: <strong>{d.buildTimeMillis}</strong>}
                           </td>
                         </tr>
                         );
@@ -159,6 +147,11 @@ class Dashboard extends Component {
                   </tbody>
                 </Table>
               </CardBody>
+              <CardFooter>
+              <div className="small text-muted">
+              <span><a href="https://cci-reporter.herokuapp.com/" target="_blank">Legacy App </a></span>
+              </div>
+              </CardFooter>
             </Card>
           </Col>
         </Row>
