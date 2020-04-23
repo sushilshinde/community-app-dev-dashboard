@@ -1,36 +1,17 @@
-import React, { Component, lazy, Suspense } from 'react';
+import React, { Component, lazy} from 'react';
 import { Wave } from 'react-animated-text';
-import { Bar, Line } from 'react-chartjs-2';
 import axios from 'axios'
 import moment from 'moment'
 import "moment-timezone";
 import {
-  Badge, Button,
   Card,
   CardBody,
   CardFooter,
   CardHeader,
-  CardTitle,
   Col,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownToggle,
-  Progress,
   Row,
   Table,
 } from 'reactstrap';
-import { CustomTooltips } from '@coreui/coreui-plugin-chartjs-custom-tooltips';
-import { getStyle, hexToRgba } from '@coreui/coreui/dist/js/coreui-utilities'
-
-const Widget03 = lazy(() => import('../../views/Widgets/Widget03'));
-
-const brandPrimary = getStyle('--primary')
-const brandSuccess = getStyle('--success')
-const brandInfo = getStyle('--info')
-const brandWarning = getStyle('--warning')
-const brandDanger = getStyle('--danger')
-
 
 class Dashboard extends Component {
   constructor(props) {
@@ -54,8 +35,6 @@ class Dashboard extends Component {
         "https://api-dev-community-app.herokuapp.com/v1/api/deployments"
       );
       if (response.status) {
-        //debugger;
-        //const data =  response.json();
         this.setState({ deployments: response.data });
       } else {
         this.setState({ error: true });
