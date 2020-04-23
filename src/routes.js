@@ -36,6 +36,10 @@ const Widgets = React.lazy(() => import('./views/Widgets/Widgets'));
 const Users = React.lazy(() => import('./views/Users/Users'));
 const User = React.lazy(() => import('./views/Users/User'));
 
+
+const FindInfo = React.lazy(() => import('./views/git/FindInfo'));
+const Docs = React.lazy(() => import('./views/docs/Docs'));
+
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -43,6 +47,13 @@ const routes = [
   { path: '/theme', exact: true, name: 'Theme', component: Colors },
   { path: '/theme/colors', name: 'Colors', component: Colors },
   { path: '/theme/typography', name: 'Typography', component: Typography },
+
+  { path: '/git', exact: true, name: 'Git', component: FindInfo },
+  { path: '/git/find-info', name: 'FindInfo', component: FindInfo },
+
+  { path: '/docs', name: 'Documentation', component: Docs },
+
+
   { path: '/base', exact: true, name: 'Base', component: Cards },
   { path: '/base/cards', name: 'Cards', component: Cards },
   { path: '/base/forms', name: 'Forms', component: Forms },
