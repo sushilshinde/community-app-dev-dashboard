@@ -1,4 +1,5 @@
 import React, { Component, lazy, Suspense } from 'react';
+import { Wave } from 'react-animated-text';
 import { Bar, Line } from 'react-chartjs-2';
 import axios from 'axios'
 import {
@@ -534,13 +535,17 @@ class Dashboard extends Component {
                       <th className="text-center">Environment</th>
                       <th className="text-center">Branch Deployed</th>
                       <th className="text-center">Build Number</th>
-                      <th>Usage</th>
                       <th className="text-center">Deployed on (IST)</th>
                       <th>Run Time</th>
                     </tr>
                   </thead>
                   <tbody>
                     {this.state.deployments.map((d) => {
+
+                        const isJobRunning = d.jobStatus === "running";
+
+
+
                         return (
                           <tr>
                            <td className="text-center">
@@ -553,7 +558,11 @@ class Dashboard extends Component {
                           </td>
                           <td className="text-center">
                             <div>
-                              <a href={`https://github.com/topcoder-platform/community-app/tree/${d.branchDeployed}`}  target="_blank">{d.branchDeployed}</a></div>
+                              <a href={`https://github.com/topcoder-platform/community-app/tree/${d.branchDeployed}`}  target="_blank">{d.branchDeployed}</a>
+                            </div>
+
+                              {isJobRunning ? <div className="small" style={{color: "red"}}><span><Wave text="Deployment in progress..."/></span></div> : ""}
+
                           </td>
                           <td className="text-center">
                             <div>
@@ -563,31 +572,17 @@ class Dashboard extends Component {
                                 <span>Deployed by </span>{d.authorName}
                             </div>
                           </td>
-                          <td>
-                            <div className="clearfix">
-                              <div className="float-left">
-                                <strong>50%</strong>
-                              </div>
-                              <div className="float-right">
-                                <small className="text-muted" >
-                                  Jun 11, 2015 - Jul 10, 2015
-                                </small>
-                              </div>
-                            </div>
-                            <Progress
-                              className="progress-xs"
-                              color="success"
-                              value="50"
-                            />
-                          </td>
                           <td className="text-center">
-                            <div>{d.buildFinishedOn}</div>
+                            <div>{d.jobStatus === "running" ? <span style={{Color: "red"}}>Job started on {d.buildStartedOn}</span> : d.buildFinishedOn}</div>
                             <div className="small text-muted">
-                              <span>{d.buildFinishedOnEDT} EDT </span>
+                              <span>
+                                {d.jobStatus === "running" ? <span style={{Color: "red"}}>Job started on {d.buildStartedOnEDT}</span> : d.buildFinishedOnEDT} EDT
+                              </span>
                             </div>
                           </td>
                           <td>
-                            <strong>{d.buildTimeMillis}</strong>
+                          {isJobRunning ? <strong>Running</strong>: <strong>{d.buildTimeMillis}</strong>}
+
                           </td>
                         </tr>
                         );
@@ -600,328 +595,7 @@ class Dashboard extends Component {
           </Col>
         </Row>
 
-        <Row>
-          <Col xs="12" sm="6" lg="3">
-            <Card className="text-white bg-info">
-              <CardBody className="pb-0">
-                <ButtonGroup className="float-right">
-                  <ButtonDropdown
-                    id="card1"
-                    isOpen={this.state.card1}
-                    toggle={() => {
-                      this.setState({ card1: !this.state.card1 });
-                    }}
-                  >
-                    <DropdownToggle caret className="p-0" color="transparent">
-                      <i className="icon-settings"></i>
-                    </DropdownToggle>
-                    <DropdownMenu right>
-                      <DropdownItem>Action</DropdownItem>
-                      <DropdownItem>Another action</DropdownItem>
-                      <DropdownItem disabled>Disabled action</DropdownItem>
-                      <DropdownItem>Something else here</DropdownItem>
-                    </DropdownMenu>
-                  </ButtonDropdown>
-                </ButtonGroup>
-                <div className="text-value">9.823</div>
-                <div>Members online</div>
-              </CardBody>
-              <div className="chart-wrapper mx-3" style={{ height: "70px" }}>
-                <Line
-                  data={cardChartData2}
-                  options={cardChartOpts2}
-                  height={70}
-                />
-              </div>
-            </Card>
-          </Col>
 
-          <Col xs="12" sm="6" lg="3">
-            <Card className="text-white bg-primary">
-              <CardBody className="pb-0">
-                <ButtonGroup className="float-right">
-                  <Dropdown
-                    id="card2"
-                    isOpen={this.state.card2}
-                    toggle={() => {
-                      this.setState({ card2: !this.state.card2 });
-                    }}
-                  >
-                    <DropdownToggle className="p-0" color="transparent">
-                      <i className="icon-location-pin"></i>
-                    </DropdownToggle>
-                    <DropdownMenu right>
-                      <DropdownItem>Action</DropdownItem>
-                      <DropdownItem>Another action</DropdownItem>
-                      <DropdownItem>Something else here</DropdownItem>
-                    </DropdownMenu>
-                  </Dropdown>
-                </ButtonGroup>
-                <div className="text-value">9.823</div>
-                <div>Members online</div>
-              </CardBody>
-              <div className="chart-wrapper mx-3" style={{ height: "70px" }}>
-                <Line
-                  data={cardChartData1}
-                  options={cardChartOpts1}
-                  height={70}
-                />
-              </div>
-            </Card>
-          </Col>
-
-          <Col xs="12" sm="6" lg="3">
-            <Card className="text-white bg-warning">
-              <CardBody className="pb-0">
-                <ButtonGroup className="float-right">
-                  <Dropdown
-                    id="card3"
-                    isOpen={this.state.card3}
-                    toggle={() => {
-                      this.setState({ card3: !this.state.card3 });
-                    }}
-                  >
-                    <DropdownToggle caret className="p-0" color="transparent">
-                      <i className="icon-settings"></i>
-                    </DropdownToggle>
-                    <DropdownMenu right>
-                      <DropdownItem>Action</DropdownItem>
-                      <DropdownItem>Another action</DropdownItem>
-                      <DropdownItem>Something else here</DropdownItem>
-                    </DropdownMenu>
-                  </Dropdown>
-                </ButtonGroup>
-                <div className="text-value">9.823</div>
-                <div>Members online</div>
-              </CardBody>
-              <div className="chart-wrapper" style={{ height: "70px" }}>
-                <Line
-                  data={cardChartData3}
-                  options={cardChartOpts3}
-                  height={70}
-                />
-              </div>
-            </Card>
-          </Col>
-
-          <Col xs="12" sm="6" lg="3">
-            <Card className="text-white bg-danger">
-              <CardBody className="pb-0">
-                <ButtonGroup className="float-right">
-                  <ButtonDropdown
-                    id="card4"
-                    isOpen={this.state.card4}
-                    toggle={() => {
-                      this.setState({ card4: !this.state.card4 });
-                    }}
-                  >
-                    <DropdownToggle caret className="p-0" color="transparent">
-                      <i className="icon-settings"></i>
-                    </DropdownToggle>
-                    <DropdownMenu right>
-                      <DropdownItem>Action</DropdownItem>
-                      <DropdownItem>Another action</DropdownItem>
-                      <DropdownItem>Something else here</DropdownItem>
-                    </DropdownMenu>
-                  </ButtonDropdown>
-                </ButtonGroup>
-                <div className="text-value">9.823</div>
-                <div>Members online</div>
-              </CardBody>
-              <div className="chart-wrapper mx-3" style={{ height: "70px" }}>
-                <Bar
-                  data={cardChartData4}
-                  options={cardChartOpts4}
-                  height={70}
-                />
-              </div>
-            </Card>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <Card>
-              <CardBody>
-                <Row>
-                  <Col sm="5">
-                    <CardTitle className="mb-0">Traffic</CardTitle>
-                    <div className="small text-muted">November 2015</div>
-                  </Col>
-                  <Col sm="7" className="d-none d-sm-inline-block">
-                    <Button color="primary" className="float-right">
-                      <i className="icon-cloud-download"></i>
-                    </Button>
-                    <ButtonToolbar
-                      className="float-right"
-                      aria-label="Toolbar with button groups"
-                    >
-                      <ButtonGroup className="mr-3" aria-label="First group">
-                        <Button
-                          color="outline-secondary"
-                          onClick={() => this.onRadioBtnClick(1)}
-                          active={this.state.radioSelected === 1}
-                        >
-                          Day
-                        </Button>
-                        <Button
-                          color="outline-secondary"
-                          onClick={() => this.onRadioBtnClick(2)}
-                          active={this.state.radioSelected === 2}
-                        >
-                          Month
-                        </Button>
-                        <Button
-                          color="outline-secondary"
-                          onClick={() => this.onRadioBtnClick(3)}
-                          active={this.state.radioSelected === 3}
-                        >
-                          Year
-                        </Button>
-                      </ButtonGroup>
-                    </ButtonToolbar>
-                  </Col>
-                </Row>
-                <div
-                  className="chart-wrapper"
-                  style={{ height: 300 + "px", marginTop: 40 + "px" }}
-                >
-                  <Line data={mainChart} options={mainChartOpts} height={300} />
-                </div>
-              </CardBody>
-              <CardFooter>
-                <Row className="text-center">
-                  <Col sm={12} md className="mb-sm-2 mb-0">
-                    <div className="text-muted">Visits</div>
-                    <strong>29.703 Users (40%)</strong>
-                    <Progress
-                      className="progress-xs mt-2"
-                      color="success"
-                      value="40"
-                    />
-                  </Col>
-                  <Col sm={12} md className="mb-sm-2 mb-0 d-md-down-none">
-                    <div className="text-muted">Unique</div>
-                    <strong>24.093 Users (20%)</strong>
-                    <Progress
-                      className="progress-xs mt-2"
-                      color="info"
-                      value="20"
-                    />
-                  </Col>
-                  <Col sm={12} md className="mb-sm-2 mb-0">
-                    <div className="text-muted">Pageviews</div>
-                    <strong>78.706 Views (60%)</strong>
-                    <Progress
-                      className="progress-xs mt-2"
-                      color="warning"
-                      value="60"
-                    />
-                  </Col>
-                  <Col sm={12} md className="mb-sm-2 mb-0">
-                    <div className="text-muted">New Users</div>
-                    <strong>22.123 Users (80%)</strong>
-                    <Progress
-                      className="progress-xs mt-2"
-                      color="danger"
-                      value="80"
-                    />
-                  </Col>
-                  <Col sm={12} md className="mb-sm-2 mb-0 d-md-down-none">
-                    <div className="text-muted">Bounce Rate</div>
-                    <strong>Average Rate (40.15%)</strong>
-                    <Progress
-                      className="progress-xs mt-2"
-                      color="primary"
-                      value="40"
-                    />
-                  </Col>
-                </Row>
-              </CardFooter>
-            </Card>
-          </Col>
-        </Row>
-
-        <Row>
-          <Col xs="6" sm="6" lg="3">
-            <Suspense fallback={this.loading()}>
-              <Widget03
-                dataBox={() => ({
-                  variant: "facebook",
-                  friends: "89k",
-                  feeds: "459",
-                })}
-              >
-                <div className="chart-wrapper">
-                  <Line
-                    data={makeSocialBoxData(0)}
-                    options={socialChartOpts}
-                    height={90}
-                  />
-                </div>
-              </Widget03>
-            </Suspense>
-          </Col>
-
-          <Col xs="6" sm="6" lg="3">
-            <Suspense fallback={this.loading()}>
-              <Widget03
-                dataBox={() => ({
-                  variant: "twitter",
-                  followers: "973k",
-                  tweets: "1.792",
-                })}
-              >
-                <div className="chart-wrapper">
-                  <Line
-                    data={makeSocialBoxData(1)}
-                    options={socialChartOpts}
-                    height={90}
-                  />
-                </div>
-              </Widget03>
-            </Suspense>
-          </Col>
-
-          <Col xs="6" sm="6" lg="3">
-            <Suspense fallback={this.loading()}>
-              <Widget03
-                dataBox={() => ({
-                  variant: "linkedin",
-                  contacts: "500+",
-                  feeds: "292",
-                })}
-              >
-                <div className="chart-wrapper">
-                  <Line
-                    data={makeSocialBoxData(2)}
-                    options={socialChartOpts}
-                    height={90}
-                  />
-                </div>
-              </Widget03>
-            </Suspense>
-          </Col>
-
-          <Col xs="6" sm="6" lg="3">
-            <Suspense fallback={this.loading()}>
-              <Widget03
-                dataBox={() => ({
-                  variant: "google-plus",
-                  followers: "894",
-                  circles: "92",
-                })}
-              >
-                <div className="chart-wrapper">
-                  <Line
-                    data={makeSocialBoxData(3)}
-                    options={socialChartOpts}
-                    height={90}
-                  />
-                </div>
-              </Widget03>
-            </Suspense>
-          </Col>
-        </Row>
       </div>
     );
   }
