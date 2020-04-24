@@ -120,14 +120,13 @@ class Dashboard extends Component {
                               {d.env.name}
                             </div>
                             <div className="small text-muted">
-                            <span className="small text-muted">Development backend</span>
+                              <span>{d.env.api} backend</span>
                             </div>
                           </td>
                           <td className="text-center">
                             <div>
                               <a href={`https://github.com/topcoder-platform/community-app/tree/${d.branchDeployed}`}  target="_blank">{d.branchDeployed}</a>
                             </div>
-
                                {isJobRunning ? <div className="small" style={{color: "red"}}><span><Wave text="Deployment in progress..."/></span></div> : <div className="small muted">
                             <span><a href={`${d.env.url}`} target="_blank">Home</a></span> | <span><a href={`${d.env.url}/challenges`} target="_blank">Listing</a></span> | <span><a href={`${d.env.url}/my-dashboard`} target="_blank">Dashboard</a></span>
                             </div>}
@@ -162,7 +161,7 @@ class Dashboard extends Component {
               </CardBody>
               <CardFooter>
               <div className="small text-muted">
-              <span><a href="https://cci-reporter.herokuapp.com/" target="_blank">Legacy App </a></span>
+              <span><a href="https://cci-reporter.herokuapp.com/" target="_blank">Legacy App </a></span> | <span><a href="https://github.com/topcoder-platform/community-app/blob/develop/docs/TCX-process.md" target="_blank">Topcoder X Process</a></span>
               </div>
               </CardFooter>
             </Card>

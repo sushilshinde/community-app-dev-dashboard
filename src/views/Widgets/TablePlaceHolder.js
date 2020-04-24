@@ -7,7 +7,7 @@ class TablePlaceHolder extends Component {
 
     for (let i = 0; i < this.props.numberOfColumns; i++) {
       cols.push(
-        <td className="text-center">
+        <td className="text-center" key={i}>
           <div>
             <Skeleton height={this.props.rowHeight} />
           </div>
@@ -16,7 +16,7 @@ class TablePlaceHolder extends Component {
     }
 
     for (let i = 0; i < this.props.numberOfRows; i++) {
-      rows.push(<tr>{cols}</tr>);
+      rows.push(<tr key={i}>{cols}</tr>);
     }
 
     return <Fragment>{rows}</Fragment>;
