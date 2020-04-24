@@ -110,7 +110,7 @@ class Dashboard extends Component {
                   </thead>
                   <tbody>
                     {
-                    this.state.deployments.length === 0 ? <TablePlaceHolder numberOfColumns={5} numberOfRows={5} rowHeight={45}/> :
+                    this.state.deployments.length === 0 ? <TablePlaceHolder numberOfColumns={5} numberOfRows={5} rowHeight={40}/> :
                     this.state.deployments.map((d,index) => {
                         const isJobRunning = d.jobStatus === "running";
                         return (
