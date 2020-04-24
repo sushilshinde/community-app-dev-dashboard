@@ -1,6 +1,7 @@
 import React, { Component, lazy, Suspense } from 'react';
+import TablePlaceHolder from '../Widgets/TablePlaceHolder'
 import { Wave } from 'react-animated-text';
-import { Bar, Line } from 'react-chartjs-2';
+import Loader from 'react-loader';
 import axios from 'axios'
 import moment from 'moment'
 import "moment-timezone";
@@ -35,12 +36,15 @@ const brandDanger = getStyle('--danger')
 class Dashboard extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       dropdownOpen: false,
       radioSelected: 2,
       deployments: [],
       error: false,
     };
+
+    this.getDeployments = this.getDeployments.bind(this);
   }
 
   componentDidMount() {
@@ -50,6 +54,7 @@ class Dashboard extends Component {
   getDeployments = async () => {
     try {
       //try to get data
+      this.setState({ deployments: [] });
       const response = await axios.get(
         "https://api-dev-community-app.herokuapp.com/v1/api/deployments"
       );
@@ -72,6 +77,7 @@ class Dashboard extends Component {
 
   render() {
     return (
+
       <div className="animated fadeIn">
         <Row>
           <Col>
@@ -80,12 +86,14 @@ class Dashboard extends Component {
                   Community App Deployments
                   <div className="card-header-actions text-muted">
                     {/*eslint-disable-next-line*/}
-                    <a href="#" className="card-header-action btn btn-setting" onClick={this.getDeployments}><i className="icon-reload"></i></a>
+                    <button className="card-header-action btn btn-setting" onClick={this.getDeployments}>&nbsp;&nbsp;<i className="icon-reload fa-lg"></i></button>
                     <mark>Last refreshed on <i> {moment().local().format("h:mm:ss a, MMMM Do YYYY")}</i></mark>
-
                   </div>
                 </CardHeader>
               <CardBody>
+              <Loader loaded={this.state.deployments.length !== 0}>
+
+              </Loader>
                 <Table
                   hover
                   responsive
@@ -101,7 +109,9 @@ class Dashboard extends Component {
                     </tr>
                   </thead>
                   <tbody>
-                    {this.state.deployments.map((d,index) => {
+                    {
+                    this.state.deployments.length === 0 ? <TablePlaceHolder numberOfColumns={5} numberOfRows={5} rowHeight={45}/> :
+                    this.state.deployments.map((d,index) => {
                         const isJobRunning = d.jobStatus === "running";
                         return (
                           <tr key={index}>
@@ -110,7 +120,7 @@ class Dashboard extends Component {
                               {d.env.name}
                             </div>
                             <div className="small text-muted">
-                              <span><a href={`${d.env.url}`} target="_blank">Home</a></span> | <span><a href={`${d.env.url}/challenges`} target="_blank">Listing</a></span> | <span><a href={`${d.env.url}/my-dashboard`} target="_blank">Dashboard</a></span>
+                            <span className="small text-muted">Development backend</span>
                             </div>
                           </td>
                           <td className="text-center">
@@ -118,8 +128,9 @@ class Dashboard extends Component {
                               <a href={`https://github.com/topcoder-platform/community-app/tree/${d.branchDeployed}`}  target="_blank">{d.branchDeployed}</a>
                             </div>
 
-                              {isJobRunning ? <div className="small" style={{color: "red"}}><span><Wave text="Deployment in progress..."/></span></div> : ""}
-
+                               {isJobRunning ? <div className="small" style={{color: "red"}}><span><Wave text="Deployment in progress..."/></span></div> : <div className="small muted">
+                            <span><a href={`${d.env.url}`} target="_blank">Home</a></span> | <span><a href={`${d.env.url}/challenges`} target="_blank">Listing</a></span> | <span><a href={`${d.env.url}/my-dashboard`} target="_blank">Dashboard</a></span>
+                            </div>}
                           </td>
                           <td className="text-center">
                             <div>
@@ -130,7 +141,7 @@ class Dashboard extends Component {
                             </div>
                           </td>
                           <td className="text-center">
-                            <div>{d.jobStatus === "running" ? <span style={{Color: "red"}}>Job started on {d.buildStartedOn}</span> : d.buildFinishedOn}</div>
+                            <div>{d.jobStatus === "running" ? <span style={{Color: "red"}}>Job started on {d.buildStartedOn}</span> : d.buildFinishedOn} IST</div>
                             <div className="small text-muted">
                               <span>
                                 {d.jobStatus === "running" ? <span style={{Color: "red"}}>Job started on {d.buildStartedOnEDT}</span> : d.buildFinishedOnEDT} EDT
@@ -142,7 +153,9 @@ class Dashboard extends Component {
                           </td>
                         </tr>
                         );
-                      })}
+                      })
+
+                      }
 
                   </tbody>
                 </Table>
