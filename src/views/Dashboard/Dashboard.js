@@ -1,6 +1,7 @@
 import React, { Component, lazy, Suspense } from 'react';
 import TablePlaceHolder from '../Widgets/TablePlaceHolder'
 import { Wave } from 'react-animated-text';
+import { Bar, Doughnut, Line, Pie, Polar, Radar } from 'react-chartjs-2';
 import Loader from 'react-loader';
 import axios from 'axios'
 import moment from 'moment'
@@ -11,6 +12,7 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
+  CardColumns,
   CardTitle,
   Col,
   Dropdown,
@@ -33,6 +35,51 @@ const brandWarning = getStyle('--warning')
 const brandDanger = getStyle('--danger')
 
 
+const pie = {
+  labels: [
+    'Hot fixes',
+    'New Features',
+    'Bug Fixes',
+  ],
+  datasets: [
+    {
+      data: [6, 16, 20],
+      backgroundColor: [
+        '#FF6384',
+        '#36A2EB',
+        '#FFCE56',
+      ],
+      hoverBackgroundColor: [
+        '#FF6384',
+        '#36A2EB',
+        '#FFCE56',
+      ],
+    }],
+};
+
+const bar = {
+  labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+  datasets: [
+    {
+      label: 'My First dataset',
+      backgroundColor: 'rgba(255,99,132,0.2)',
+      borderColor: 'rgba(255,99,132,1)',
+      borderWidth: 1,
+      hoverBackgroundColor: 'rgba(255,99,132,0.4)',
+      hoverBorderColor: 'rgba(255,99,132,1)',
+      data: [65, 59, 80, 81, 56, 55, 40],
+    },
+  ],
+};
+
+const options = {
+  tooltips: {
+    enabled: false,
+    custom: CustomTooltips
+  },
+  maintainAspectRatio: false
+}
+
 class Dashboard extends Component {
   constructor(props) {
     super(props);
@@ -50,6 +97,8 @@ class Dashboard extends Component {
   componentDidMount() {
     this.getDeployments();
   }
+
+
 
   getDeployments = async () => {
     try {
@@ -77,23 +126,28 @@ class Dashboard extends Component {
 
   render() {
     return (
-
       <div className="animated fadeIn">
         <Row>
           <Col>
             <Card>
-            <CardHeader>
-                  Community App Deployments
-                  <div className="card-header-actions text-muted">
-                    {/*eslint-disable-next-line*/}
-                    <button className="card-header-action btn btn-setting" onClick={this.getDeployments}>&nbsp;&nbsp;<i className="icon-reload fa-lg"></i></button>
-                    <mark>Last refreshed on <i> {moment().local().format("h:mm:ss a, MMMM Do YYYY")}</i></mark>
-                  </div>
-                </CardHeader>
+              <CardHeader>
+                Community App Deployments
+                <div className="card-header-actions text-muted">
+                  {/*eslint-disable-next-line*/}
+                  <button
+                    className="card-header-action btn btn-setting"
+                    onClick={this.getDeployments}
+                  >
+                    &nbsp;&nbsp;<i className="icon-reload fa-lg"></i>
+                  </button>
+                  <mark>
+                    Last refreshed on{" "}
+                    <i> {moment().local().format("h:mm:ss a, MMMM Do YYYY")}</i>
+                  </mark>
+                </div>
+              </CardHeader>
               <CardBody>
-              <Loader loaded={this.state.deployments.length !== 0}>
-
-              </Loader>
+                <Loader loaded={this.state.deployments.length !== 0}></Loader>
                 <Table
                   hover
                   responsive
@@ -109,66 +163,182 @@ class Dashboard extends Component {
                     </tr>
                   </thead>
                   <tbody>
-                    {
-                    this.state.deployments.length === 0 ? <TablePlaceHolder numberOfColumns={5} numberOfRows={5} rowHeight={40}/> :
-                    this.state.deployments.map((d,index) => {
+                    {this.state.deployments.length === 0 ? (
+                      <TablePlaceHolder
+                        numberOfColumns={5}
+                        numberOfRows={5}
+                        rowHeight={40}
+                      />
+                    ) : (
+                      this.state.deployments.map((d, index) => {
                         const isJobRunning = d.jobStatus === "running";
                         return (
                           <tr key={index}>
-                           <td className="text-center">
-                            <div>
-                              {d.env.name}
-                            </div>
-                            <div className="small text-muted">
-                              <span>{d.env.api} backend</span>
-                            </div>
-                          </td>
-                          <td className="text-center">
-                            <div>
-                              <a href={`https://github.com/topcoder-platform/community-app/tree/${d.branchDeployed}`}  target="_blank">{d.branchDeployed}</a>
-                            </div>
-                               {isJobRunning ? <div className="small" style={{color: "red"}}><span><Wave text="Deployment in progress..."/></span></div> : <div className="small muted">
-                            <span><a href={`${d.env.url}`} target="_blank">Home</a></span> | <span><a href={`${d.env.url}/challenges`} target="_blank">Listing</a></span> | <span><a href={`${d.env.url}/my-dashboard`} target="_blank">Dashboard</a></span>
-                            </div>}
-                          </td>
-                          <td className="text-center">
-                            <div>
-                              <a href={d.buildUrl} target="_blank">{d.buildNumber}</a>
+                            <td className="text-center">
+                              <div>{d.env.name}</div>
+                              <div className="small text-muted">
+                                <span>{d.env.api} backend</span>
+                              </div>
+                            </td>
+                            <td className="text-center">
+                              <div>
+                                <a
+                                  href={`https://github.com/topcoder-platform/community-app/tree/${d.branchDeployed}`}
+                                  target="_blank"
+                                >
+                                  {d.branchDeployed}
+                                </a>
+                              </div>
+                              {isJobRunning ? (
+                                <div className="small" style={{ color: "red" }}>
+                                  <span>
+                                    <Wave text="Deployment in progress..." />
+                                  </span>
+                                </div>
+                              ) : (
+                                <div className="small muted">
+                                  <span>
+                                    <a href={`${d.env.url}`} target="_blank">
+                                      Home
+                                    </a>
+                                  </span>{" "}
+                                  |{" "}
+                                  <span>
+                                    <a
+                                      href={`${d.env.url}/challenges`}
+                                      target="_blank"
+                                    >
+                                      Listing
+                                    </a>
+                                  </span>{" "}
+                                  |{" "}
+                                  <span>
+                                    <a
+                                      href={`${d.env.url}/my-dashboard`}
+                                      target="_blank"
+                                    >
+                                      Dashboard
+                                    </a>
+                                  </span>
+                                </div>
+                              )}
+                            </td>
+                            <td className="text-center">
+                              <div>
+                                <a href={d.buildUrl} target="_blank">
+                                  {d.buildNumber}
+                                </a>
                               </div>
                               <div className="small text-muted">
-                                <span>Deployed by </span>{d.authorName}
-                            </div>
-                          </td>
-                          <td className="text-center">
-                            <div>{d.jobStatus === "running" ? <span style={{Color: "red"}}>Job started on {d.buildStartedOn}</span> : d.buildFinishedOn} IST</div>
-                            <div className="small text-muted">
-                              <span>
-                                {d.jobStatus === "running" ? <span style={{Color: "red"}}>Job started on {d.buildStartedOnEDT}</span> : d.buildFinishedOnEDT} EDT
-                              </span>
-                            </div>
-                          </td>
-                          <td>
-                            {isJobRunning ? <strong>Running</strong>: <strong>{d.buildTimeMillis}</strong>}
-                          </td>
-                        </tr>
+                                <span>Deployed by </span>
+                                {d.authorName}
+                              </div>
+                            </td>
+                            <td className="text-center">
+                              <div>
+                                {d.jobStatus === "running" ? (
+                                  <span style={{ Color: "red" }}>
+                                    Job started on {d.buildStartedOn}
+                                  </span>
+                                ) : (
+                                  d.buildFinishedOn
+                                )}{" "}
+                                IST
+                              </div>
+                              <div className="small text-muted">
+                                <span>
+                                  {d.jobStatus === "running" ? (
+                                    <span style={{ Color: "red" }}>
+                                      Job started on {d.buildStartedOnEDT}
+                                    </span>
+                                  ) : (
+                                    d.buildFinishedOnEDT
+                                  )}{" "}
+                                  EDT
+                                </span>
+                              </div>
+                            </td>
+                            <td>
+                              {isJobRunning ? (
+                                <strong>Running</strong>
+                              ) : (
+                                <strong>{d.buildTimeMillis}</strong>
+                              )}
+                            </td>
+                          </tr>
                         );
                       })
-
-                      }
-
+                    )}
                   </tbody>
                 </Table>
               </CardBody>
               <CardFooter>
-              <div className="small text-muted">
-              <span><a href="https://cci-reporter.herokuapp.com/" target="_blank">Legacy App </a></span> | <span><a href="https://github.com/topcoder-platform/community-app/blob/develop/docs/TCX-process.md" target="_blank">Topcoder X Process</a></span>
-              </div>
+                <div className="small text-muted">
+                  <span>
+                    <a
+                      href="https://cci-reporter.herokuapp.com/"
+                      target="_blank"
+                    >
+                      Legacy App{" "}
+                    </a>
+                  </span>{" "}
+                  |{" "}
+                  <span>
+                    <a
+                      href="https://github.com/topcoder-platform/community-app/blob/develop/docs/TCX-process.md"
+                      target="_blank"
+                    >
+                      Topcoder X Process
+                    </a>
+                  </span>
+                </div>
               </CardFooter>
             </Card>
           </Col>
         </Row>
 
-
+        <Row>
+          <Col>
+            <CardColumns className="cols-2">
+              <Card>
+                <CardHeader>
+                  Release Data (Last six months)
+                  <div className="card-header-actions">
+                    <a
+                      href="http://www.chartjs.org"
+                      className="card-header-action"
+                    >
+                      <small className="text-muted">docs</small>
+                    </a>
+                  </div>
+                </CardHeader>
+                <CardBody>
+                  <div className="chart-wrapper">
+                    <Pie data={pie} />
+                  </div>
+                </CardBody>
+              </Card>
+              <Card>
+                <CardHeader>
+                  Bar Chart
+                  <div className="card-header-actions">
+                    <a
+                      href="http://www.chartjs.org"
+                      className="card-header-action"
+                    >
+                      <small className="text-muted">docs</small>
+                    </a>
+                  </div>
+                </CardHeader>
+                <CardBody>
+                  <div className="chart-wrapper">
+                    <Bar data={bar} options={options} />
+                  </div>
+                </CardBody>
+              </Card>
+            </CardColumns>
+          </Col>
+        </Row>
       </div>
     );
   }
