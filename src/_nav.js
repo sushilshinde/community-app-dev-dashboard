@@ -25,7 +25,7 @@ export default {
     },
     {
       name: 'Releases',
-      url: '/theme/typography',
+      url: '/base/releases',
       icon: 'icon-pencil',
     },
     {

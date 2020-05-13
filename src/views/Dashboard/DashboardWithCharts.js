@@ -7,15 +7,78 @@ import axios from 'axios'
 import moment from 'moment'
 import "moment-timezone";
 import {
+  Badge, Button,
   Card,
   CardBody,
   CardFooter,
   CardHeader,
+  CardColumns,
+  CardTitle,
   Col,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownToggle,
+  Progress,
   Row,
   Table,
 } from 'reactstrap';
+import { CustomTooltips } from '@coreui/coreui-plugin-chartjs-custom-tooltips';
+import { getStyle, hexToRgba } from '@coreui/coreui/dist/js/coreui-utilities'
 
+const Widget03 = lazy(() => import('../../views/Widgets/Widget03'));
+
+const brandPrimary = getStyle('--primary')
+const brandSuccess = getStyle('--success')
+const brandInfo = getStyle('--info')
+const brandWarning = getStyle('--warning')
+const brandDanger = getStyle('--danger')
+
+
+const pie = {
+  labels: [
+    'Hot fixes',
+    'New Features',
+    'Bug Fixes',
+  ],
+  datasets: [
+    {
+      data: [6, 16, 20],
+      backgroundColor: [
+        '#FF6384',
+        '#36A2EB',
+        '#FFCE56',
+      ],
+      hoverBackgroundColor: [
+        '#FF6384',
+        '#36A2EB',
+        '#FFCE56',
+      ],
+    }],
+};
+
+const bar = {
+  labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+  datasets: [
+    {
+      label: 'My First dataset',
+      backgroundColor: 'rgba(255,99,132,0.2)',
+      borderColor: 'rgba(255,99,132,1)',
+      borderWidth: 1,
+      hoverBackgroundColor: 'rgba(255,99,132,0.4)',
+      hoverBorderColor: 'rgba(255,99,132,1)',
+      data: [65, 59, 80, 81, 56, 55, 40],
+    },
+  ],
+};
+
+const options = {
+  tooltips: {
+    enabled: false,
+    custom: CustomTooltips
+  },
+  maintainAspectRatio: false
+}
 
 class Dashboard extends Component {
   constructor(props) {
@@ -124,7 +187,6 @@ class Dashboard extends Component {
                         numberOfColumns={5}
                         numberOfRows={5}
                         rowHeight={40}
-                        width={5}
                       />
                     ) : (
                       this.state.deployments.map((d, index) => {
@@ -238,16 +300,64 @@ class Dashboard extends Component {
                     >
                       Legacy App{" "}
                     </a>
+                  </span>{" "}
+                  |{" "}
+                  <span>
+                    <a
+                      href="https://github.com/topcoder-platform/community-app/blob/develop/docs/TCX-process.md"
+                      target="_blank"
+                    >
+                      Topcoder X Process
+                    </a>
                   </span>
-                  
-                  
                 </div>
               </CardFooter>
             </Card>
           </Col>
         </Row>
 
-
+        <Row>
+          <Col>
+            <CardColumns className="cols-2">
+              <Card>
+                <CardHeader>
+                  Release Data (Last six months)
+                  <div className="card-header-actions">
+                    <a
+                      href="http://www.chartjs.org"
+                      className="card-header-action"
+                    >
+                      <small className="text-muted">docs</small>
+                    </a>
+                  </div>
+                </CardHeader>
+                <CardBody>
+                  <div className="chart-wrapper">
+                    <Pie data={pie} />
+                  </div>
+                </CardBody>
+              </Card>
+              <Card>
+                <CardHeader>
+                  Bar Chart
+                  <div className="card-header-actions">
+                    <a
+                      href="http://www.chartjs.org"
+                      className="card-header-action"
+                    >
+                      <small className="text-muted">docs</small>
+                    </a>
+                  </div>
+                </CardHeader>
+                <CardBody>
+                  <div className="chart-wrapper">
+                    <Bar data={bar} options={options} />
+                  </div>
+                </CardBody>
+              </Card>
+            </CardColumns>
+          </Col>
+        </Row>
       </div>
     );
   }

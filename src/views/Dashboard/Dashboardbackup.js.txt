@@ -7,15 +7,78 @@ import axios from 'axios'
 import moment from 'moment'
 import "moment-timezone";
 import {
+  Badge, Button,
   Card,
   CardBody,
   CardFooter,
   CardHeader,
+  CardColumns,
+  CardTitle,
   Col,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownToggle,
+  Progress,
   Row,
   Table,
 } from 'reactstrap';
+import { CustomTooltips } from '@coreui/coreui-plugin-chartjs-custom-tooltips';
+import { getStyle, hexToRgba } from '@coreui/coreui/dist/js/coreui-utilities'
 
+const Widget03 = lazy(() => import('../../views/Widgets/Widget03'));
+
+const brandPrimary = getStyle('--primary')
+const brandSuccess = getStyle('--success')
+const brandInfo = getStyle('--info')
+const brandWarning = getStyle('--warning')
+const brandDanger = getStyle('--danger')
+
+
+const pie = {
+  labels: [
+    'Hot fixes',
+    'New Features',
+    'Bug Fixes',
+  ],
+  datasets: [
+    {
+      data: [6, 16, 20],
+      backgroundColor: [
+        '#FF6384',
+        '#36A2EB',
+        '#FFCE56',
+      ],
+      hoverBackgroundColor: [
+        '#FF6384',
+        '#36A2EB',
+        '#FFCE56',
+      ],
+    }],
+};
+
+const bar = {
+  labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+  datasets: [
+    {
+      label: 'My First dataset',
+      backgroundColor: 'rgba(255,99,132,0.2)',
+      borderColor: 'rgba(255,99,132,1)',
+      borderWidth: 1,
+      hoverBackgroundColor: 'rgba(255,99,132,0.4)',
+      hoverBorderColor: 'rgba(255,99,132,1)',
+      data: [65, 59, 80, 81, 56, 55, 40],
+    },
+  ],
+};
+
+const options = {
+  tooltips: {
+    enabled: false,
+    custom: CustomTooltips
+  },
+  maintainAspectRatio: false
+}
 
 class Dashboard extends Component {
   constructor(props) {
@@ -26,46 +89,54 @@ class Dashboard extends Component {
       radioSelected: 2,
       deployments: [],
       error: false,
+      isRefresherOn :false,
       deploymentStartedOnEDT: null,
+      buildTimeFinished:0,
+      refresherTimeout: 1000*60*17
+
     };
 
     this.getDeployments = this.getDeployments.bind(this);
     this.addRefresher = this.addRefresher.bind(this);
-    this.refreshTable = this.refreshTable.bind(this);
+    this.removeRefresher = this.removeRefresher.bind(this);
   }
 
-  addRefresher() {
-    const runningJobs = this.state.deployments.find((d) => {
-        return d.jobStatus === "running";
-    })
-    if(runningJobs){
-      this.getDeployments();
+  removeRefresher(){
+    this.setState({isRefresherOn:true});
+  }
+
+  addRefresher(buildTimeMillis) {
+    //debugger;
+    if(this.state.refresherTimeout < buildTimeMillis) {
+      this.removeRefresher()
+      return;
     }
+
+    if(!this.state.isRefresherOn){
+      this.setState({isRefresherOn:true})
+      setInterval(this.getDeployments,10000)
+    }
+    if(true){
+      this.setState({buildTimeFinished:buildTimeMillis})
+    }
+
   }
 
   componentDidMount() {
-    this.setState({ deployments: [] });
     this.getDeployments();
-    //setInterval(this.addRefresher,1000*60*5)
-    setInterval(this.addRefresher,60000)
-  }
-
-  refreshTable(){
-    this.setState({ deployments: [] });
-    this.getDeployments()
   }
 
   getDeployments = async () => {
-
     try {
       //Don't empty if a refresher is on
-      //
+     // if(isRefresherOn){
+        this.setState({ deployments: [] });
+      //}
       const response = await axios.get(
-        "https://api-dev-community-app.herokuapp.com/v1/api/deployments"
+        "http://localhost:3000/v1/api/deployments"
+        //"https://api-dev-community-app.herokuapp.com/v1/api/deployments"
       );
       if (response.status) {
-        //debugger;
-        //const data =  response.json();
         this.setState({ deployments: response.data });
       } else {
         this.setState({ error: true });
@@ -92,7 +163,7 @@ class Dashboard extends Component {
                   {/*eslint-disable-next-line*/}
                   <button
                     className="card-header-action btn btn-setting"
-                    onClick={this.refreshTable}
+                    onClick={this.getDeployments}
                   >
                     &nbsp;&nbsp;<i className="icon-reload fa-lg"></i>
                   </button>
@@ -124,11 +195,15 @@ class Dashboard extends Component {
                         numberOfColumns={5}
                         numberOfRows={5}
                         rowHeight={40}
-                        width={5}
                       />
                     ) : (
                       this.state.deployments.map((d, index) => {
                         const isJobRunning = d.jobStatus === "running";
+
+                        if(isJobRunning){
+                          this.addRefresher(d.buildTimeMillis);
+                        }
+
                         return (
                           <tr key={index}>
                             <td className="text-center">
@@ -238,16 +313,64 @@ class Dashboard extends Component {
                     >
                       Legacy App{" "}
                     </a>
+                  </span>{" "}
+                  |{" "}
+                  <span>
+                    <a
+                      href="https://github.com/topcoder-platform/community-app/blob/develop/docs/TCX-process.md"
+                      target="_blank"
+                    >
+                      Topcoder X Process
+                    </a>
                   </span>
-                  
-                  
                 </div>
               </CardFooter>
             </Card>
           </Col>
         </Row>
 
-
+        <Row>
+          <Col>
+            <CardColumns className="cols-2">
+              <Card>
+                <CardHeader>
+                  Release Data (Last six months)
+                  <div className="card-header-actions">
+                    <a
+                      href="http://www.chartjs.org"
+                      className="card-header-action"
+                    >
+                      <small className="text-muted">docs</small>
+                    </a>
+                  </div>
+                </CardHeader>
+                <CardBody>
+                  <div className="chart-wrapper">
+                    <Pie data={pie} />
+                  </div>
+                </CardBody>
+              </Card>
+              <Card>
+                <CardHeader>
+                  Bar Chart
+                  <div className="card-header-actions">
+                    <a
+                      href="http://www.chartjs.org"
+                      className="card-header-action"
+                    >
+                      <small className="text-muted">docs</small>
+                    </a>
+                  </div>
+                </CardHeader>
+                <CardBody>
+                  <div className="chart-wrapper">
+                    <Bar data={bar} options={options} />
+                  </div>
+                </CardBody>
+              </Card>
+            </CardColumns>
+          </Col>
+        </Row>
       </div>
     );
   }
